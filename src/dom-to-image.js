@@ -693,10 +693,16 @@
 				return Promise.all(
 					styleSheets.map(function (sheet) {
 						if (sheet.href) {
-							return fetch(sheet.href)
-								.then(toText)
-								.then(setBaseHref(sheet.href))
-								.then(toStyleSheet);
+                            console.log(sheet.href);
+                            if(sheet.href != "https://blockdata-test.chargebee.com/assets/hp_v3/iframe_views/animation.css") {
+                                console.log(sheet.href);
+                                return fetch(sheet.href)
+                                    .then(toText)
+                                    .then(setBaseHref(sheet.href))
+                                    .then(toStyleSheet);
+                            } else {
+                                return Promise.resolve(sheet);
+                            }
 						} else {
 							return Promise.resolve(sheet);
 						}
@@ -761,22 +767,35 @@
 
 					return styleElement.sheet;
 				}
-			}
-
+            }
+            
             function getCssRules(styleSheets) {
                 var cssRules = [];
                 styleSheets.forEach(function (sheet) {
-                    console.log(sheet);
-					if (sheet.cssRules && typeof sheet.cssRules === 'object') {
-						try {
-							util.asArray(sheet.cssRules || []).forEach(cssRules.push.bind(cssRules));
-						} catch (e) {
-							console.log('Error while reading CSS rules from ' + sheet.href, e.toString());
-						}
-					}
+                    if (sheet.hasOwnProperty("cssRules")) {
+                        try {
+                            util.asArray(sheet.cssRules || []).forEach(cssRules.push.bind(cssRules));
+                        } catch (e) {
+                            console.log('Error while reading CSS rules from ' + sheet.href, e.toString());
+                        }
+                    }
                 });
                 return cssRules;
             }
+
+            // function getCssRules(styleSheets) {
+            //     var cssRules = [];
+            //     styleSheets.forEach(function (sheet) {
+			// 		if (sheet.cssRules && typeof sheet.cssRules === 'object') {
+			// 			try {
+			// 				util.asArray(sheet.cssRules || []).forEach(cssRules.push.bind(cssRules));
+			// 			} catch (e) {
+			// 				console.log('Error while reading CSS rules from ' + sheet.href, e.toString());
+			// 			}
+			// 		}
+            //     });
+            //     return cssRules;
+            // }
 
             function newWebFont(webFontRule) {
                 return {
