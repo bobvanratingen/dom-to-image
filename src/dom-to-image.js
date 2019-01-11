@@ -766,6 +766,7 @@
             function getCssRules(styleSheets) {
                 var cssRules = [];
                 styleSheets.forEach(function (sheet) {
+                    console.log(sheet);
 					if (sheet.cssRules && typeof sheet.cssRules === 'object') {
 						try {
 							util.asArray(sheet.cssRules || []).forEach(cssRules.push.bind(cssRules));
